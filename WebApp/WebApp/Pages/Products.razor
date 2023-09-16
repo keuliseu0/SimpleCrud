@@ -1,0 +1,67 @@
+﻿@page "/"
+@using System.Text.Json
+@using Core.Application.Services
+@using static System.Net.WebRequestMethods
+@inject IProductService ProductService
+@using Core.Domain.Entities
+
+<div class="row col-12">
+    <div class="col-12">
+        <a href="@($"product")" class="btn btn-success">Add New Product</a>
+        <br/>
+        <div class="card">
+            <div class="card-header ui-sortable-handle" style="cursor: move;">
+                <h3 class="card-title">
+                    <i class="fas fa-chart-pie mr-1"></i>
+                    Products
+                </h3>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Price</th>
+                            <th>&nbsp;</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!products.Any())
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center">No Result</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (Product p in products)
+                            {
+                                <tr>
+                                    <td>@p.Id</td>
+                                    <td>@p.Name</td>
+                                    <td>@p.Description</td>
+                                    <td>@p.Price</td>
+                                    <td><a href="@($"product/{p.Id}")" class="btn btn-warning">Details</a></td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+   
+</div>
+
+
+@code {
+
+    public IEnumerable<Product> products { get; set; } = Enumerable.Empty<Product>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        products = await this.ProductService.LoadProducts();
+    }
+}
